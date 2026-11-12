@@ -1,141 +1,212 @@
 
-// 1. Load saved results
-window.results = JSON.parse(
-    localStorage.getItem("results")
-) || [];
+/* =================================
+   RESULTS.JS
+   Student Results Management
+================================= */
 
-
-// 2. Save results
-function saveResults() {
-
-    localStorage.setItem(
-        "results",
-        JSON.stringify(window.results)
-    );
-
-}
-
-
-// 3. Calculate grade
+// 1. Calculate grade
 function calculateGrade(percentage) {
 
-    if (percentage >= 90) {
-        return "A+";
-    }
-    else if (percentage >= 80) {
-        return "A";
-    }
-    else if (percentage >= 70) {
-        return "B";
-    }
-    else if (percentage >= 60) {
-        return "C";
-    }
-    else if (percentage >= 40) {
-        return "D";
-    }
-    else {
-        return "F";
-    }
+    if (percentage >= 90) return "A+";
+    if (percentage >= 80) return "A";
+    if (percentage >= 70) return "B";
+    if (percentage >= 60) return "C";
+    if (percentage >= 40) return "D";
+
+    return "F";
 
 }
 
 
-// 4. Display results
+// 2. Display student results
 function displayResults() {
 
-    const table = document.getElementById("resultsTable");
+    const resultsTable = document.getElementById("resultsTable");
 
-    table.innerHTML = "";
+    if (window.results.length === 0) {
 
-    window.results.forEach(function(result) {
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${result.id}</td>
-            <td>${result.name}</td>
-            <td>${result.python}</td>
-            <td>${result.html}</td>
-            <td>${result.javascript}</td>
-            <td>${result.total}</td>
-            <td>${result.percentage}%</td>
-            <td>${result.grade}</td>
-            <td>${result.status}</td>
+        resultsTable.innerHTML = `
+            <tr>
+                <td colspan="9" class="empty-message">
+                    No results available.
+                </td>
+            </tr>
         `;
 
-        table.appendChild(row);
+        return;
+    }
+
+    resultsTable.innerHTML = window.results.map(function(result) {
+
+        // Get the latest student name
+        const student = window.students.find(function(item) {
+            return item.id === result.studentId;
+        });
+
+        const studentName = student
+            ? student.name
+            : result.studentName;
+
+        const resultClass = result.status === "Pass"
+            ? "status-pass"
+            : "status-fail";
+
+        return `
+            <tr>
+                <td>${escapeHTML(result.studentId)}</td>
+                <td>${escapeHTML(studentName)}</td>
+                <td>${escapeHTML(result.python)}</td>
+                <td>${escapeHTML(result.html)}</td>
+                <td>${escapeHTML(result.javascript)}</td>
+                <td>${escapeHTML(result.total)}</td>
+                <td>${escapeHTML(result.percentage)}%</td>
+                <td>${escapeHTML(result.grade)}</td>
+
+                <td>
+                    <span class="status ${resultClass}">
+                        ${escapeHTML(result.status)}
+                    </span>
+                </td>
+            </tr>
+        `;
+
+    }).join("");
+
+}
+
+
+// 3. Handle result form submission
+document.getElementById("resultForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const studentId = document.getElementById("resultStudentId")
+        .value.trim().toUpperCase();
+
+    const python = Number(document.getElementById("pythonMarks").value);
+
+    const html = Number(document.getElementById("htmlMarks").value);
+
+    const javascript = Number(
+        document.getElementById("javascriptMarks").value
+    );
+
+
+    // 4. Find student
+    const student = window.students.find(function(item) {
+
+        return item.id.toUpperCase() === studentId;
 
     });
 
-}
+    if (!student) {
+
+        alert("Student ID not found. Register the student first.");
+
+        return;
+    }
 
 
-// 5. Add and calculate student results
-document.getElementById("resultForm")
-    .addEventListener("submit", function(event) {
+    // 5. Validate marks
+    const marks = [python, html, javascript];
 
-        event.preventDefault();
+    const invalidMarks = marks.some(function(mark) {
 
-        const id = document.getElementById("resultStudentId").value.trim();
+        return !Number.isFinite(mark) || mark < 0 || mark > 100;
 
-        const student = window.students.find(function(item) {
-            return item.id.toLowerCase() === id.toLowerCase();
-        });
+    });
 
-        if (!student) {
-            alert("Student ID not found!");
-            return;
-        }
+    if (invalidMarks) {
 
-        const python = Number(document.getElementById("pythonMarks").value);
-        const html = Number(document.getElementById("htmlMarks").value);
-        const javascript = Number(document.getElementById("javascriptMarks").value);
+        alert("Marks must be between 0 and 100.");
 
-        const total = python + html + javascript;
+        return;
+    }
 
-        const percentage = Number((total / 3).toFixed(2));
 
-        const grade = calculateGrade(percentage);
+    // 6. Calculate total
+    const total = python + html + javascript;
 
-        const status =
-            python >= 40 && html >= 40 && javascript >= 40
-                ? "Pass"
-                : "Fail";
 
-        const result = {
-            id: student.id,
-            name: student.name,
-            python: python,
-            html: html,
-            javascript: javascript,
-            total: total,
-            percentage: percentage,
-            grade: grade,
-            status: status
-        };
+    // 7. Calculate percentage
+    const percentage = Number((total / 3).toFixed(2));
 
-        // Update existing result or add a new one
-        const existingIndex = window.results.findIndex(function(item) {
-            return item.id === student.id;
-        });
 
-        if (existingIndex !== -1) {
-            window.results[existingIndex] = result;
-        } else {
-            window.results.push(result);
-        }
+    // 8. Calculate grade
+    const grade = calculateGrade(percentage);
 
-        saveResults();
 
-        displayResults();
+    // 9. Calculate Pass or Fail
+    const status = marks.every(function(mark) {
 
-        this.reset();
+        return mark >= 40;
 
-        alert("Student result calculated successfully!");
+    }) ? "Pass" : "Fail";
+
+
+    // 10. Create result object
+    const resultRecord = {
+
+        studentId: student.id,
+        studentName: student.name,
+
+        python: python,
+        html: html,
+        javascript: javascript,
+
+        total: total,
+        percentage: percentage,
+
+        grade: grade,
+        status: status
+
+    };
+
+
+    // 11. Check for existing result
+    const existingIndex = window.results.findIndex(function(result) {
+
+        return result.studentId === student.id;
+
+    });
+
+
+    if (existingIndex !== -1) {
+
+        // Update existing result
+        window.results[existingIndex] = resultRecord;
+
+    } else {
+
+        // Add new result
+        window.results.push(resultRecord);
+
+    }
+
+
+    // 12. Save results
+    saveResults();
+
+
+    // 13. Refresh results table
+    displayResults();
+
+
+    // 14. Clear form
+    this.reset();
+
+
+    // 15. Show calculated result
+    alert(
+        "Result calculated successfully!\n\n" +
+        "Total: " + total + "/300\n" +
+        "Percentage: " + percentage + "%\n" +
+        "Grade: " + grade + "\n" +
+        "Result: " + status
+    );
 
 });
 
 
-// 6. Display saved results when website opens
+// 16. Display results when website opens
 displayResults();

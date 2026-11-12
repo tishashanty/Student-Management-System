@@ -1,96 +1,164 @@
 
-// 1. Load saved attendance records
-window.attendance = JSON.parse(
-    localStorage.getItem("attendance")
-) || [];
+/* =================================
+   ATTENDANCE.JS
+   Attendance Management
+================================= */
 
+// 1. Get today's date in YYYY-MM-DD format
+function getTodayDate() {
 
-// 2. Save attendance records
-function saveAttendance() {
+    const today = new Date();
 
-    localStorage.setItem(
-        "attendance",
-        JSON.stringify(window.attendance)
-    );
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
 
+    return `${year}-${month}-${day}`;
 }
 
 
-// 3. Display students in attendance table
+// 2. Display attendance
 function displayAttendance() {
 
-    const table = document.getElementById("attendanceTable");
+    const attendanceTable = document.getElementById("attendanceTable");
 
-    table.innerHTML = "";
+    const today = getTodayDate();
 
-    window.students.forEach(function(student) {
+    document.getElementById("attendanceDate").textContent =
+        "Date: " + new Date().toLocaleDateString();
 
-        const today = new Date().toLocaleDateString("en-CA");
+    if (window.students.length === 0) {
 
+        attendanceTable.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty-message">
+                    Add students to start attendance.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    attendanceTable.innerHTML = window.students.map(function(student) {
+
+        // Find today's attendance for this student
         const record = window.attendance.find(function(item) {
-            return item.id === student.id && item.date === today;
+            return item.studentId === student.id && item.date === today;
         });
 
         const status = record ? record.status : "Not Marked";
 
-        const row = document.createElement("tr");
+        let statusClass = "status-pending";
 
-        row.innerHTML = `
-            <td>${student.id}</td>
-            <td>${student.name}</td>
+        if (status === "Present") {
+            statusClass = "status-present";
+        }
 
-            <td>
-                <button onclick="markAttendance('${student.id}', 'Present')">
-                    Present
-                </button>
+        if (status === "Absent") {
+            statusClass = "status-absent";
+        }
 
-                <button onclick="markAttendance('${student.id}', 'Absent')">
-                    Absent
-                </button>
+        return `
+            <tr>
+                <td>${escapeHTML(student.id)}</td>
+                <td>${escapeHTML(student.name)}</td>
+                <td>${escapeHTML(student.course)}</td>
 
-                <span>${status}</span>
-            </td>
+                <td>
+                    <span class="status ${statusClass}">
+                        ${status}
+                    </span>
+                </td>
+
+                <td>
+                    <button class="present-btn"
+                        data-attendance="Present"
+                        data-id="${escapeHTML(student.id)}">
+                        Present
+                    </button>
+
+                    <button class="absent-btn"
+                        data-attendance="Absent"
+                        data-id="${escapeHTML(student.id)}">
+                        Absent
+                    </button>
+                </td>
+            </tr>
         `;
 
-        table.appendChild(row);
-
-    });
+    }).join("");
 
 }
+
+
+// 3. Handle attendance button clicks
+document.getElementById("attendanceTable").addEventListener("click", function(event) {
+
+    const button = event.target.closest("button[data-attendance]");
+
+    if (!button) return;
+
+    const id = button.dataset.id;
+    const status = button.dataset.attendance;
+
+    markAttendance(id, status);
+
+});
 
 
 // 4. Mark attendance
 function markAttendance(id, status) {
 
-    const today = new Date().toLocaleDateString("en-CA");
+    const student = window.students.find(function(item) {
+        return item.id === id;
+    });
 
-    const existingRecord = window.attendance.find(function(item) {
-        return item.id === id && item.date === today;
+    if (!student) {
+        alert("Student not found.");
+        return;
+    }
+
+    if (status !== "Present" && status !== "Absent") {
+        alert("Invalid attendance status.");
+        return;
+    }
+
+    const today = getTodayDate();
+
+    // Check whether attendance is already marked
+    const existingRecord = window.attendance.find(function(record) {
+
+        return record.studentId === id && record.date === today;
+
     });
 
     if (existingRecord) {
 
+        // Update existing record
         existingRecord.status = status;
+        existingRecord.studentName = student.name;
 
     } else {
 
+        // Create new record
         window.attendance.push({
-            id: id,
+
+            studentId: id,
+            studentName: student.name,
             date: today,
             status: status
+
         });
 
     }
 
+    // Save attendance
     saveAttendance();
 
+    // Refresh attendance and dashboard
     displayAttendance();
-
-    if (typeof updateDashboard === "function") {
-        updateDashboard();
-    }
-
-    alert("Attendance marked as " + status);
+    updateDashboard();
 
 }
 
