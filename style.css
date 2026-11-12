@@ -1,0 +1,212 @@
+
+/* General Settings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #101827;
+    color: white;
+}
+
+/* Header */
+header {
+    background-color: #172033;
+    padding: 25px;
+    text-align: center;
+    border-bottom: 2px solid #00e5ff;
+}
+
+header h1 {
+    color: #00e5ff;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #cccccc;
+}
+
+/* Navigation */
+nav {
+    background-color: #172033;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #00e5ff;
+}
+
+/* Main Content */
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+/* Sections */
+section {
+    background-color: #172033;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    border: 1px solid #26364d;
+}
+
+section h2 {
+    color: #00e5ff;
+    margin-bottom: 20px;
+}
+
+/* Dashboard Cards */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background-color: #26364d;
+    padding: 25px;
+    text-align: center;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border: 1px solid #00e5ff;
+}
+
+.card h3 {
+    color: #cccccc;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: #00e5ff;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* Forms and Inputs */
+form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #40516a;
+    border-radius: 6px;
+    background-color: #101827;
+    color: white;
+    outline: none;
+}
+
+input:focus {
+    border-color: #00e5ff;
+}
+
+input::placeholder {
+    color: #aaaaaa;
+}
+
+/* Buttons */
+button {
+    padding: 12px;
+    background-color: #00bcd4;
+    color: #101827;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #00e5ff;
+}
+
+/* Search Box */
+#searchStudent {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #40516a;
+    text-align: center;
+}
+
+th {
+    background-color: #26364d;
+    color: #00e5ff;
+}
+
+td {
+    color: #eeeeee;
+}
+
+/* Footer */
+footer {
+    background-color: #172033;
+    padding: 20px;
+    text-align: center;
+    color: #cccccc;
+    border-top: 2px solid #00e5ff;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+
+    main {
+        width: 95%;
+    }
+
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    nav a {
+        display: inline-block;
+        margin: 8px;
+    }
+
+    section {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 650px;
+    }
+}

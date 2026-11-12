@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Student Management System</h1>
+        <p>Manage Students, Attendance and Results</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#students">Students</a>
+        <a href="#attendance">Attendance</a>
+        <a href="#results">Results</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+
+            <div class="dashboard-container">
+
+                <div class="card">
+                    <h3>Total Students</h3>
+                    <p id="totalStudents">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Present</h3>
+                    <p id="presentStudents">0</p>
+                </div>
+
+                <div class="card">
+                    <h3>Absent</h3>
+                    <p id="absentStudents">0</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Student Management -->
+        <section id="students">
+            <h2>Student Management</h2>
+
+            <form id="studentForm">
+
+                <input type="text" id="studentName"
+                    placeholder="Enter Student Name" required>
+
+                <input type="number" id="studentAge"
+                    placeholder="Enter Age" min="1" required>
+
+                <input type="text" id="studentCourse"
+                    placeholder="Enter Course" required>
+
+                <input type="email" id="studentEmail"
+                    placeholder="Enter Email" required>
+
+                <input type="tel" id="studentPhone"
+                    placeholder="Enter Phone Number" required>
+
+                <button type="submit">Add Student</button>
+
+            </form>
+
+            <h3>Student List</h3>
+
+            <input type="text" id="searchStudent"
+                placeholder="Search Student">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Course</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="studentTable">
+                    <!-- Student details will appear here -->
+                </tbody>
+            </table>
+
+        </section>
+
+        <!-- Attendance Section -->
+        <section id="attendance">
+            <h2>Attendance Management</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Attendance</th>
+                    </tr>
+                </thead>
+
+                <tbody id="attendanceTable">
+                    <!-- Attendance details will appear here -->
+                </tbody>
+            </table>
+
+        </section>
+
+        <!-- Results Section -->
+        <section id="results">
+            <h2>Student Results</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Python</th>
+                        <th>HTML</th>
+                        <th>JavaScript</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+
+                <tbody id="resultsTable">
+
+                    <!-- Result details will appear here -->
+                </tbody>
+                <form id="resultForm">
+
+    <input type="text" id="resultStudentId"
+        placeholder="Enter Student ID" required>
+
+    <input type="number" id="pythonMarks"
+        placeholder="Python Marks" min="0" max="100" required>
+
+    <input type="number" id="htmlMarks"
+        placeholder="HTML Marks" min="0" max="100" required>
+
+    <input type="number" id="javascriptMarks"
+        placeholder="JavaScript Marks" min="0" max="100" required>
+
+    <button type="submit">Calculate Result</button>
+
+</form>
+
+            </table>
+            
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Student Management System | Team Project 2026</p>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="students.js"></script>
+    <script src="attendance.js"></script>
+    <script src="results.js"></script>
+    <script src="dashboard.js"></script>
+
+</body>
+</html>
